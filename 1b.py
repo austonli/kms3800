@@ -51,18 +51,22 @@ def EVplan(plan,alpha,beta):
     outcomeEVs = [0]*len(outc(plan))
     for i in range(0,len(outc(plan))):
         outcomeEVs[i] = EVoutcome(plan,outc(plan)[i],alpha,beta)
-    return max(outcomeEVs)
+    return sum(outcomeEVs)
 
 """the updated EV value for a specfic outcome of a plan"""
 def EVoutcome(plan,outcome,alpha,beta):
-    prob = 1
-    for i in range(0,len(outcome)):
-        prob = prob * posterior(outcome[i],plan[i],alpha[i],beta[i])
     posteriors = [0] *len(outcome)
     for k in range(0,len(outcome)):
         posteriors[k] = (alpha[k]+outcome[k])/(alpha[k]+beta[k]+plan[k]-outcome[k])
-    return max(posteriors)*prob
+    return max(posteriors)*probout(plan,outcome,alpha,beta)
 
+
+"""finding the probability of a signal sequence/outcome"""
+def probout(plan,outcome,alpha,beta):
+    prob = 1
+    for i in range(0,len(outcome)):
+        prob = prob * posterior(outcome[i],plan[i],alpha[i],beta[i])
+    return prob
 
 """finding the probability of s successes given n trials with its corresponding alpha and beta values"""
 def posterior(s,n,alpha,beta):
@@ -128,8 +132,8 @@ def outc(plan):
 
     return lists
 
-
-
+"""for i in range(0,6):
+    print(posterior(i,3,1,1))"""
 
 #print(outc([5,5,5,5,5]))
 alphas = [1]*5
@@ -138,6 +142,11 @@ alphaother = [10]
 alphaother += [1]*4
 betaother = [10]
 betaother += [1]*4
+
+print(EVplan([1,2,1,1,1],alphas,betas))
+
+#print(outc([1,1,2]))
+#print(EVplan([1,1,3,2,1],alphas,betas))
 #print(recurcomb(25,5))
-print(optstrategy(8,5,alphas,betas))
+#print(optstrategy(8,5,alphas,betas))
 #print(optstrategy(25,5,alphaother,betaother))
