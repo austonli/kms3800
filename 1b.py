@@ -3,6 +3,8 @@ import math
 import random
 import itertools
 from scipy.stats import beta as Beta
+
+"""iterating through all possible plans for a given N,k and finding the optimal strategy"""
 def optstrategy(N,k,alpha,beta):
     allplans = recurcomb(N,k)
     EVarray = [0]*len(allplans)
@@ -27,7 +29,7 @@ def optstrategy(N,k,alpha,beta):
             masterplan.append(plan)
     return masterplan"""
 
-
+"""iterating all possible plans using recursion"""
 def recurcomb(N,k):
     if (k == 1):
         return [N]
@@ -44,14 +46,14 @@ def recurcomb(N,k):
             masterplan += step
         
     return masterplan
-
+"""choosing the highest EV outcome as the EV of the plan"""
 def EVplan(plan,alpha,beta):
-    outcomeEVs = [0]*len(outcomes(plan))
-    for i in range(0,len(outcomes(plan))):
-        outcomeEVs[i] = EVoutcome(plan,outcomes(plan)[i],alpha,beta)
+    outcomeEVs = [0]*len(outc(plan))
+    for i in range(0,len(outc(plan))):
+        outcomeEVs[i] = EVoutcome(plan,outc(plan)[i],alpha,beta)
     return max(outcomeEVs)
 
-
+"""the updated EV value for a specfic outcome of a plan"""
 def EVoutcome(plan,outcome,alpha,beta):
     prob = 1
     for i in range(0,len(outcome)):
@@ -59,24 +61,28 @@ def EVoutcome(plan,outcome,alpha,beta):
     posteriors = [0] *len(outcome)
     for k in range(0,len(outcome)):
         posteriors[k] = (alpha[k]+outcome[k])/(alpha[k]+beta[k]+plan[k]-outcome[k])
-    print(max(posteriors)*prob)
     return max(posteriors)*prob
 
+
+"""finding the probability of s successes given n trials with its corresponding alpha and beta values"""
 def posterior(s,n,alpha,beta):
     combination = comb(n,s)
     betanew = betaf(alpha+s,beta+n-s)
     betaold = betaf(alpha,beta)
     return combination*betanew/betaold
 
-
+"""beta function for a given a and b value"""
 def betaf(a,b):
     f = math.factorial
     return (f(a-1)*f(b-1))/f(a+b-1)
 
+"""hardcoded version of the combination function for nCr"""
 def comb(n,r):
     f = math.factorial
     return f(n)/f(r)/f(n-r)
 
+"""a failed attempt at iterating the outcomes of a
+plan using cartesian products"""
 def outcomes(plan):
     #sum of indices must be <= sum(plan)
     #each index of outcome is <= index of plan
@@ -107,7 +113,7 @@ def outcomes(plan):
             twofilter.append(k)
     return twofilter
 
-
+"""efficient way of enumerating the possible outcomes of a plan"""
 def outc(plan):
     lists = []
     zeroz = [0]*len(plan)
@@ -125,7 +131,7 @@ def outc(plan):
 
 
 
-print(outc([1,2,5,1,1]))
+#print(outc([5,5,5,5,5]))
 alphas = [1]*5
 betas = [1]*5
 alphaother = [10]
@@ -133,5 +139,5 @@ alphaother += [1]*4
 betaother = [10]
 betaother += [1]*4
 #print(recurcomb(25,5))
-#print(optstrategy(6,2,alphas,betas))
+print(optstrategy(8,5,alphas,betas))
 #print(optstrategy(25,5,alphaother,betaother))
